@@ -15,6 +15,7 @@
 ![rádio](https://img.shields.io/badge/mesh-LoRa%20915%20MHz-00ff9c?style=flat-square&labelColor=0d1117)
 ![case](https://img.shields.io/badge/case-IP67-39ff14?style=flat-square&labelColor=0d1117)
 ![impressão](https://img.shields.io/badge/pe%C3%A7as-impress%C3%A3o%203D-8a2be2?style=flat-square&labelColor=0d1117)
+![homelab](https://img.shields.io/badge/homelab-4%C3%97%20M720q%20Tiny-e2231a?style=flat-square&labelColor=0d1117)
 
 **Um terminal de campo dentro de uma mala rígida: rede mesh sem internet, GPS, tela touch, rádio SDR e bateria para horas — feito para busca e salvamento (SAR).**
 
@@ -23,7 +24,8 @@
 ```console
 chakal@field:~$ cat /etc/motd
 > Sem torre. Sem internet. Sem desculpa.
-> Este repositório ensina a montar, peça por peça, um cyberdeck SAR em duas edições.
+> Este repositório ensina a montar, peça por peça, um cyberdeck SAR em duas edições
+> e o homelab que recebe tudo o que ele coleta em campo.
 ```
 
 ---
@@ -41,7 +43,8 @@ chakal@field:~$ cat /etc/motd
 [07] field-ops ..................... operação em campo e clima hostil
 [08] rules ......................... regras, licenças e segurança
 [09] regen ......................... como gerar PDFs e STLs de novo
-[10] roadmap ....................... próximos decks
+[10] homelab ....................... base fixa: 4 ThinkCentre Tiny no rack 10"
+[11] roadmap ....................... próximos decks
 ```
 
 ---
@@ -94,7 +97,7 @@ Conceito físico:
 ```text
 howtocyberdeckandstuff/
 ├── README.md                      ← você está aqui
-├── docs/img/                      ← renders usados neste README
+├── docs/img/                      ← renders e folhas usados nos READMEs
 ├── cyberdeck-sar-completo/
 │   ├── README.md                  ← resumo técnico da edição
 │   ├── cyberdeck_sar_pelican1450_desenho_tecnico.pdf   (A3, 4 folhas)
@@ -102,12 +105,18 @@ howtocyberdeckandstuff/
 │   ├── modelo3d/stl/              ← peças prontas para fatiar
 │   ├── modelo3d/cyberdeck_3d.py   ← fonte paramétrica das peças
 │   └── gerar_pdf.py               ← gera o desenho técnico
-└── cyberdeck-sar-5k/
-    ├── README.md
-    ├── cyberdeck_sar_5k_desenho_tecnico.pdf            (A3, 4 folhas)
-    ├── documento/                 ← análise de custos e evolução (PDF)
-    ├── modelo3d/stl/              ← peças + calços
-    └── gerar_pdf.py
+├── cyberdeck-sar-5k/
+│   ├── README.md
+│   ├── cyberdeck_sar_5k_desenho_tecnico.pdf            (A3, 4 folhas)
+│   ├── documento/                 ← análise de custos e evolução (PDF)
+│   ├── modelo3d/stl/              ← peças + calços
+│   └── gerar_pdf.py
+└── homelab-thinkcentre-tiny/
+    ├── README.md                  ← rack, serviços, VLANs, fases
+    ├── homelab_rack_desenho_tecnico.pdf                (A3, rev. D, 3 folhas)
+    ├── plano/                     ← plano de monitoramento e observação (PDF)
+    ├── guia/                      ← Kiwix offline + estação de satélite (PDF)
+    └── gerar_desenho.py
 ```
 
 <div align="center">
@@ -352,15 +361,43 @@ Parâmetros principais (topo de `modelo3d/cyberdeck_3d.py`):
 
 ---
 
-## `[10] > cat ROADMAP`
+## `[10] > ssh homelab`
+
+O deck vai para o campo; o **homelab** fica em casa. São 4 **Lenovo ThinkCentre M720q Tiny** num mini rack de 10" que monitoram a própria rede, observam o céu (ADS-B, satélites meteorológicos, radiossondas) e guardam o que o deck e o kit portátil trazem de volta.
+
+```text
+ ┌──────── RACK 10" · 8U ────────┐        campo                 casa
+ │ U1  switch  VLAN 10/20/30     │   ┌──────────────┐  Tailscale  ┌──────────┐
+ │ U2  nó 1   monitoramento      │   │ cyberdeck /  │ ──────────► │ nó 1     │
+ │ U3  nó 2   dados + VM radio   │   │ kit portátil │   MQTT      │ Grafana  │
+ │ U4  nó 3   lab isolado        │   └──────────────┘             │ InfluxDB │
+ │ U5  nó 4   sensor de rede     │                                └──────────┘
+ │ U6  base de encaixe do kit    │   em casa, os rádios do kit encaixam na U6
+ │ U7-8 fontes · régua · nobreak │   e passam para a VM "radio" do nó 2
+ └───────────────────────────────┘
+```
+
+| Peça | Conteúdo |
+|---|---|
+| [`homelab-thinkcentre-tiny/`](homelab-thinkcentre-tiny/) | README com hardware, serviços, VLANs, fases e ordem de montagem |
+| Desenho técnico rev. D | Rack, rede/elétrica e antenas com a base de encaixe (3 folhas A3) |
+| Plano de observação | Grafana, Security Onion, feeds (NASA FIRMS, INPE, USGS, Cemaden), ADS-B, sensores |
+| Guia | Wikipédia offline (Kiwix) e recepção de satélites com SatDump |
+
+<div align="center"><img src="docs/img/homelab_folha-1.png" width="520" alt="Folha 1 do desenho técnico do homelab: vistas do rack"></div>
+
+---
+
+## `[11] > cat ROADMAP`
 
 ```text
 [x] v1  Cyberdeck SAR completo (Pelican 1450 / Pi 5 16 GB)
 [x] v1  Edição R$ 5 mil (Patola MP-0039 / Pi 5 8 GB)
 [ ] v2  Deck ThinkPad T14 numa Vonder MAI 415: placa-mãe solta, tela 10,1" touch,
         pack 4S de células 21700 com USB-C PD
+[x] lab Homelab ThinkCentre Tiny — documentação rev. D (rack, plano, guia)
 [ ] kit Kit de observação com notebook (Nitro V15) — ADS-B, satélite, mesh
-[ ] hub Integração com o homelab (Grafana, MQTT, InfluxDB via Tailscale)
+[ ] hub Integração deck/kit → homelab (Grafana, MQTT, InfluxDB via Tailscale)
 ```
 
 ---
