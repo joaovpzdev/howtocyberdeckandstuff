@@ -16,6 +16,7 @@
 ![case](https://img.shields.io/badge/case-IP67-39ff14?style=flat-square&labelColor=0d1117)
 ![impressão](https://img.shields.io/badge/pe%C3%A7as-impress%C3%A3o%203D-8a2be2?style=flat-square&labelColor=0d1117)
 ![homelab](https://img.shields.io/badge/homelab-4%C3%97%20M720q%20Tiny-e2231a?style=flat-square&labelColor=0d1117)
+![kit](https://img.shields.io/badge/kit-Nitro%20V15%20%2B%20SDR-ffb000?style=flat-square&labelColor=0d1117)
 
 **Um terminal de campo dentro de uma mala rígida: rede mesh sem internet, GPS, tela touch, rádio SDR e bateria para horas — feito para busca e salvamento (SAR).**
 
@@ -25,7 +26,7 @@
 chakal@field:~$ cat /etc/motd
 > Sem torre. Sem internet. Sem desculpa.
 > Este repositório ensina a montar, peça por peça, um cyberdeck SAR em duas edições
-> e o homelab que recebe tudo o que ele coleta em campo.
+> o kit portátil de observação com notebook e o homelab que recebe tudo o que eles coletam.
 ```
 
 ---
@@ -44,7 +45,8 @@ chakal@field:~$ cat /etc/motd
 [08] rules ......................... regras, licenças e segurança
 [09] regen ......................... como gerar PDFs e STLs de novo
 [10] homelab ....................... base fixa: 4 ThinkCentre Tiny no rack 10"
-[11] roadmap ....................... próximos decks
+[11] kit ........................... estação de escuta portátil com o notebook
+[12] roadmap ....................... próximos decks
 ```
 
 ---
@@ -111,11 +113,17 @@ howtocyberdeckandstuff/
 │   ├── documento/                 ← análise de custos e evolução (PDF)
 │   ├── modelo3d/stl/              ← peças + calços
 │   └── gerar_pdf.py
-└── homelab-thinkcentre-tiny/
-    ├── README.md                  ← rack, serviços, VLANs, fases
-    ├── homelab_rack_desenho_tecnico.pdf                (A3, rev. D, 3 folhas)
-    ├── plano/                     ← plano de monitoramento e observação (PDF)
-    ├── guia/                      ← Kiwix offline + estação de satélite (PDF)
+├── homelab-thinkcentre-tiny/
+│   ├── README.md                  ← rack, serviços, VLANs, fases
+│   ├── homelab_rack_desenho_tecnico.pdf                (A3, rev. D, 3 folhas)
+│   ├── plano/                     ← plano de monitoramento e observação (PDF)
+│   ├── guia/                      ← Kiwix offline + estação de satélite (PDF)
+│   └── gerar_desenho.py
+└── kit-portatil-nitro/
+    ├── README.md                  ← o que opera, cenários de uso, rastro de RF
+    ├── kit_observacao_notebook_desenho_tecnico.pdf     (A3, rev. B, 2 folhas)
+    ├── docker-compose.yml         ← adsb, sonde, ism, mosquitto, kiwix, central
+    ├── .env.example
     └── gerar_desenho.py
 ```
 
@@ -388,7 +396,33 @@ O deck vai para o campo; o **homelab** fica em casa. São 4 **Lenovo ThinkCentre
 
 ---
 
-## `[11] > cat ROADMAP`
+## `[11] > ./kit --portatil`
+
+Entre o deck (campo) e o homelab (casa) existe o **kit portátil**: o notebook Acer Nitro V 15 com Linux, rádios USB e um `docker compose`, tudo numa **Vonder MAI 415** em 3 camadas. Em casa, os mesmos rádios encaixam no rack.
+
+```text
+ SDR 1  ── 1090 MHz ──► aviões no mapa (tar1090)
+ SDR 2  ── 137 MHz  ──► satélites Meteor-M (SatDump)
+        ── 400 MHz  ──► radiossondas (auto_rx)          um perfil por vez
+        ── 433 MHz  ──► sensores ISM (rtl_433 → MQTT)
+ Heltec ── 915 MHz  ──► mesh Meshtastic com o cyberdeck
+ GPS    ──────────────► posição e hora sem internet
+ SSD    ──────────────► Wikipédia e mapas offline (Kiwix)
+```
+
+| Peça | Conteúdo |
+|---|---|
+| [`kit-portatil-nitro/`](kit-portatil-nitro/) | README com cada equipamento e seu serviço, cenários de uso, o que transmite e o que só escuta, BOM e ordem de montagem |
+| Desenho técnico rev. B | Camadas do case, corte, ligações USB/RF, energia e lista de materiais (2 folhas A3) |
+| `docker-compose.yml` | Serviços prontos com perfis para trocar a função do SDR 2 |
+
+Custo: **~R$ 2.635** no essencial (notebook já existente), ~R$ 3.265 com opcionais.
+
+<div align="center"><img src="docs/img/kit_folha-1.png" width="520" alt="Folha 1 do desenho técnico do kit: camadas do case Vonder MAI 415"></div>
+
+---
+
+## `[12] > cat ROADMAP`
 
 ```text
 [x] v1  Cyberdeck SAR completo (Pelican 1450 / Pi 5 16 GB)
@@ -396,7 +430,8 @@ O deck vai para o campo; o **homelab** fica em casa. São 4 **Lenovo ThinkCentre
 [ ] v2  Deck ThinkPad T14 numa Vonder MAI 415: placa-mãe solta, tela 10,1" touch,
         pack 4S de células 21700 com USB-C PD
 [x] lab Homelab ThinkCentre Tiny — documentação rev. D (rack, plano, guia)
-[ ] kit Kit de observação com notebook (Nitro V15) — ADS-B, satélite, mesh
+[x] kit Kit de observação com notebook (Nitro V15) — documentação rev. B e compose
+[ ] kit Montagem do kit: Heltec V3 comprado, demais itens em compra
 [ ] hub Integração deck/kit → homelab (Grafana, MQTT, InfluxDB via Tailscale)
 ```
 

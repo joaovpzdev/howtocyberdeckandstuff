@@ -1,0 +1,92 @@
+# Kit de observação portátil - Acer Nitro V 15 (Linux)
+#
+# Sempre ligados:  adsb (SDR 1), mosquitto, kiwix
+# SDR 2, um perfil por vez:
+#   docker compose --profile sonde up -d    # radiossondas 400-406 MHz
+#   docker compose --profile ism   up -d    # sensores 433 MHz
+#   (satélite Meteor-M: SatDump nativo, fora do compose; derrube sonde/ism antes)
+# Central de painéis:
+#   docker compose --profile central up -d
+#
+# Antes de subir: grave o serial dos SDR (rtl_eeprom -d 0 -s ADSB / -s MULTI),
+# preencha o .env (LAT, LON, ALT) e confira as imagens: tags e variáveis mudam
+# entre versões, então leia o README de cada projeto antes de atualizar.
+
+services:
+  adsb:
+    image: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder:latest
+    restart: unless-stopped
+    device_cgroup_rules:
+      - "c 189:* rwm"
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - ./dados/globe_history:/var/globe_history
+    environment:
+      - TZ=America/Sao_Paulo
+      - READSB_DEVICE_TYPE=rtlsdr
+      - READSB_RTLSDR_DEVICE=ADSB
+      - READSB_GAIN=autogain
+      - READSB_LAT=${LAT}
+      - READSB_LON=${LON}
+      - READSB_ALT=${ALT}m
+    ports:
+      - "8080:80"            # tar1090: aviões no mapa
+
+  sonde:
+    profiles: ["sonde"]
+    image: ghcr.io/projecthorus/radiosonde_auto_rx:latest
+    restart: unless-stopped
+    network_mode: host      # interface web na porta 5000
+    device_cgroup_rules:
+      - "c 189:* rwm"
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - ./sonde/station.cfg:/opt/auto_rx/station.cfg:ro   # copie o station.cfg.example do projeto
+      - ./dados/sonde_log:/opt/auto_rx/log
+
+  ism:
+    profiles: ["ism"]
+    image: hertzg/rtl_433:latest
+    restart: unless-stopped
+    device_cgroup_rules:
+      - "c 189:* rwm"
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+    command: ["-d", ":MULTI", "-f", "433.92M", "-M", "time:utc", "-F", "mqtt://mosquitto:1883"]
+    depends_on: [mosquitto]
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    ports:
+      - "127.0.0.1:1883:1883"   # troque pelo IP do Tailscale para o cyberdeck publicar
+
+  kiwix:
+    image: ghcr.io/kiwix/kiwix-serve:latest
+    restart: unless-stopped
+    volumes:
+      - ${SSD:-/media/ssd}/zim:/data:ro
+    command: ["*.zim"]
+    ports:
+      - "8081:8080"            # Wikipédia, WikiMed, manuais offline
+
+  influxdb:
+    profiles: ["central"]
+    image: influxdb:2
+    restart: unless-stopped
+    volumes:
+      - ./dados/influxdb:/var/lib/influxdb2
+    ports:
+      - "127.0.0.1:8086:8086"
+
+  grafana:
+    profiles: ["central"]
+    image: grafana/grafana-oss:latest
+    restart: unless-stopped
+    volumes:
+      - ./dados/grafana:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on: [influxdb]
