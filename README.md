@@ -118,6 +118,7 @@ howtocyberdeckandstuff/
 │   ├── homelab_rack_desenho_tecnico.pdf                (A3, rev. D, 3 folhas)
 │   ├── plano/                     ← plano de monitoramento e observação (PDF)
 │   ├── guia/                      ← Kiwix offline + estação de satélite (PDF)
+│   ├── fase5-ia/                  ← nó de IA, rack de GPU 5 placas, guia EPYC
 │   └── gerar_desenho.py
 └── kit-portatil-nitro/
     ├── README.md                  ← o que opera, cenários de uso, rastro de RF
@@ -391,6 +392,7 @@ O deck vai para o campo; o **homelab** fica em casa. São 4 **Lenovo ThinkCentre
 | Desenho técnico rev. D | Rack, rede/elétrica e antenas com a base de encaixe (3 folhas A3) |
 | Plano de observação | Grafana, Security Onion, feeds (NASA FIRMS, INPE, USGS, Cemaden), ADS-B, sensores |
 | Guia | Wikipédia offline (Kiwix) e recepção de satélites com SatDump |
+| [`fase5-ia/`](homelab-thinkcentre-tiny/fase5-ia/) | IA local: nó 5 com GPU, rack de alumínio para 5 placas e host EPYC (desenhos + guia de 9 páginas) |
 
 <div align="center"><img src="docs/img/homelab_folha-1.png" width="520" alt="Folha 1 do desenho técnico do homelab: vistas do rack"></div>
 
@@ -430,6 +432,8 @@ Custo: **~R$ 2.635** no essencial (notebook já existente), ~R$ 3.265 com opcion
 [ ] v2  Deck ThinkPad T14 numa Vonder MAI 415: placa-mãe solta, tela 10,1" touch,
         pack 4S de células 21700 com USB-C PD
 [x] lab Homelab ThinkCentre Tiny — documentação rev. D (rack, plano, guia)
+[x] ia  Fase 5: nó de IA, rack de GPU 2020 e guia do host EPYC (documentação)
+[ ] ia  Montagem: 1ª RTX 3060 no nó 5, depois host EPYC e placas G2-G5
 [x] kit Kit de observação com notebook (Nitro V15) — documentação rev. B e compose
 [ ] kit Montagem do kit: Heltec V3 comprado, demais itens em compra
 [ ] hub Integração deck/kit → homelab (Grafana, MQTT, InfluxDB via Tailscale)
