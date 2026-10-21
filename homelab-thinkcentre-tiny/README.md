@@ -25,6 +25,7 @@ Homelab com mini PCs **Lenovo ThinkCentre M720q Tiny** num mini rack de 10". Ele
 | `plano/homelab_plano_observacao.pdf` | Plano de monitoramento e observação global (10 páginas): fases, custos, instalação de cada serviço |
 | `guia/homelab_satelite_biblioteca_offline.pdf` | Guia v1.0: Kiwix (Wikipédia offline) e estação de satélite (SatDump) |
 | `gerar_desenho.py`, `plano/`, `guia/` | Scripts que geram os PDFs (ReportLab) |
+| [`fase5-ia/`](fase5-ia/) | **Fase 5 – IA local:** nó 5 com GPU por OCuLink, rack de GPU 2020 para 5 placas e guia do host EPYC |
 
 <div align="center">
 <img src="../docs/img/homelab_folha-1.png" width="640" alt="Folha 1: vistas do rack, ocupação e lista de materiais">
@@ -78,6 +79,7 @@ vm_radio:            [readsb, satdump, rtl_433, radiosonde_auto_rx, gpsd, kismet
 | 2 – Sensor de rede | Nó 4 com Security Onion + ntopng | ~R$ 2.520 |
 | 3 – Antenas fixas e base de encaixe | ADS-B fixo, mastro com 5 antenas, painel coaxial, hub | ~R$ 2.610 |
 | 4 – Ambiente | Sensor.Community, tomada Shelly, Blitzortung | ~R$ 400 + Blitzortung |
+| 5 – IA local | Nó 5 + RTX 3060 (OCuLink); depois rack de GPU 2020 com host EPYC e até 5 placas | ~R$ 4.660 → ~R$ 19.700 |
 
 > 📡 Os rádios do **kit portátil** (2 RTL-SDR Blog V3, Heltec V3, GPS, Wi-Fi MT7612U, SSD) encaixam no rack quando você está em casa e vão no case quando você sai. Só o RTL-SDR do ADS-B fica sempre em casa.
 
@@ -91,6 +93,7 @@ vm_radio:            [readsb, satdump, rtl_433, radiosonde_auto_rx, gpsd, kismet
 4. **Fase 2:** nó 4, espelhamento porta 1 → 7, Security Onion na VM (26 GB) e ntopng.
 5. **Fase 3:** mastro aterrado, protetores de surto (DPS) em todos os coaxiais, painel coaxial e base de encaixe na U6.
 6. **Fase 4:** sensores ambientais.
+7. **Fase 5:** nó de IA; siga o [`fase5-ia/`](fase5-ia/) e o guia do host EPYC.
 
 Passo a passo de cada serviço: `plano/homelab_plano_observacao.pdf`.
 
