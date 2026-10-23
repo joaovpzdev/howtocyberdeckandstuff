@@ -119,6 +119,7 @@ howtocyberdeckandstuff/
 │   ├── plano/                     ← plano de monitoramento e observação (PDF)
 │   ├── guia/                      ← Kiwix offline + estação de satélite (PDF)
 │   ├── fase5-ia/                  ← nó de IA, rack de GPU 5 placas, guia EPYC
+│   ├── mikrotik/                  ← estudo de núcleo alternativo (RB5009/RouterOS)
 │   └── gerar_desenho.py
 └── kit-portatil-nitro/
     ├── README.md                  ← o que opera, cenários de uso, rastro de RF
@@ -393,6 +394,7 @@ O deck vai para o campo; o **homelab** fica em casa. São 4 **Lenovo ThinkCentre
 | Plano de observação | Grafana, Security Onion, feeds (NASA FIRMS, INPE, USGS, Cemaden), ADS-B, sensores |
 | Guia | Wikipédia offline (Kiwix) e recepção de satélites com SatDump |
 | [`fase5-ia/`](homelab-thinkcentre-tiny/fase5-ia/) | IA local: nó 5 com GPU, rack de alumínio para 5 placas e host EPYC (desenhos + guia de 9 páginas) |
+| [`mikrotik/`](homelab-thinkcentre-tiny/mikrotik/) | Estudo de núcleo alternativo com MikroTik RB5009: arquitetura, storage, segurança (AAA), metodologias e `.rsc` |
 
 <div align="center"><img src="docs/img/homelab_folha-1.png" width="520" alt="Folha 1 do desenho técnico do homelab: vistas do rack"></div>
 
